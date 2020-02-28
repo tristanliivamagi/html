@@ -3,6 +3,10 @@
 //login();
 
 
+
+
+
+
 require "conn.php";
 $username=$_POST["username"];
 $password=$_POST["password"];
@@ -23,6 +27,16 @@ if (mysqli_num_rows($results) > 0) { // user found
 		//$name =$row["username"];
 		echo "login success !!! Welcome user echo";
 		$msg = "login success!! Welcome user msg";
+		$data= file_get_contents($_post["data"]);
+		$array = json_decode($data, true);
+		foreach($array as $row)
+		{
+			$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+			
+			mysqli_query($db, $sql);
+		}
+		echo "data inserted";
+
 }
 else{
 	echo "login not success !! echo";

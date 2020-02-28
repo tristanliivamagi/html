@@ -24,7 +24,12 @@ $errors   = array();
 if (isset($_POST['register_btn'])) {
 	register();
 }
-
+//REGISTER DEVICE/MACHINE
+function registerDevice(){
+	$query = "INSERT INTO users (username, email, user_type, password) 
+					  VALUES('$username', '$email', '$user_type', '$password')";
+			mysqli_query($db, $query);
+}
 // REGISTER USER
 function register(){
 	// call these variables with the global keyword to make them available in function
