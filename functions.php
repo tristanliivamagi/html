@@ -12,7 +12,7 @@ if (!$db) {
 }
 
 echo "Success: A proper connection to MySQL was made! The my_db database is great." . PHP_EOL;
-echo "Host information: " . mysqli_get_host_info($link) . PHP_EOL;
+echo "Host information: " . mysqli_get_host_info($db) . PHP_EOL;
 
 
 // variable declaration
@@ -23,12 +23,6 @@ $errors   = array();
 // call the register() function if register_btn is clicked
 if (isset($_POST['register_btn'])) {
 	register();
-}
-//REGISTER DEVICE/MACHINE
-function registerDevice(){
-	$query = "INSERT INTO users (username, email, user_type, password) 
-					  VALUES('$username', '$email', '$user_type', '$password')";
-			mysqli_query($db, $query);
 }
 // REGISTER USER
 function register(){
@@ -181,4 +175,46 @@ function isAdmin()
 	}else{
 		return false;
 	}
+}
+
+// Valid constant names
+define("FOO",     "something");
+define("FOO2",    "something else");
+define("FOO_BAR", "something more");
+// variable declaration
+//$filename="";
+
+
+// call the login() function if register_btn is clicked
+if (isset($_POST['upload_json_btn'])) {
+	uploadJson();
+}
+
+//insert machine stuff from json file
+function uploadJson(){
+	$data= file_get_contents('machinesOperationalData.json');
+		$array = json_decode($data, true);
+		echo $data;
+		echo'<br><br>';
+		display_array_recursive($array);
+		foreach($array as $row)
+		{
+			$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+			
+			mysqli_query($db, $sql);
+		}
+		echo "data inserted";
+}
+function display_array_recursive($json_rec){
+	if($json_rec){
+		foreach($json_rec as $key=> $value){
+			if(is_array($value)){
+				display_array_recursive($value);
+			}else{
+				echo$key.'--'.$value.'<br>';
+				
+			}
+		}
+	}
+	
 }

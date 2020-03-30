@@ -61,6 +61,7 @@ if (isset($_GET['logout'])) {
 						<a href="home.php?logout='1'" style="color: red;">logout</a>
                        &nbsp; <a href="create_user.php"> + add user</a>
 					   &nbsp; <a href="view_data.php"> + view data</a>
+					   &nbsp; <a href="Upload_Json.php"> + Upload Data File</a>
 					</small>
 
 				<?php endif ?>
