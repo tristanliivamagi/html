@@ -14,6 +14,26 @@ if (!$db) {
 echo "Success: A proper connection to MySQL was made! The my_db database is great." . PHP_EOL;
 echo "Host information: " . mysqli_get_host_info($db) . PHP_EOL;
 
+$curdir = getcwd();
+//echo $curdir;
+//The name of the directory that we need to create.
+$directoryName = "/temp";
+$tempdir=$curdir.$directoryName;
+echo $tempdir;
+//Check if the directory already exists.
+/*
+if(!is_dir($directoryName)){
+    //Directory does not exist, so lets create it.
+    if(mkdir($curdir ."/temp", 0777){
+		echo "Directory has been created...";
+	}else{
+		echo "failed to create directory...";
+	}else{
+		echo "directory already exists";
+	}
+}
+*/
+
 
 // variable declaration
 $username = "";
@@ -74,6 +94,17 @@ function register(){
 			header('location: index.php');				
 		}
 	}
+}
+
+// call the addBusiness() function if register_btn is clicked
+if (isset($_POST['add_business_btn'])) {
+	addBusiness();
+}
+function addBusiness(){
+	
+	
+	
+	
 }
 
 // return user array from their id
@@ -192,7 +223,13 @@ if (isset($_POST['upload_json_btn'])) {
 
 //insert machine stuff from json file
 function uploadJson(){
-	$data= file_get_contents('machinesOperationalData.json');
+		
+	if(isset($_FILES['jsonFile'])){
+		print_r($_FILES);
+	}
+
+
+	$data= file_get_contents($_FILES['jsonFile']['tmp_name']);//'machinesOperationalData.json'
 		$array = json_decode($data, true);
 		echo $data;
 		echo'<br><br>';
@@ -212,7 +249,7 @@ function display_array_recursive($json_rec){
 				display_array_recursive($value);
 			}else{
 				echo$key.'--'.$value.'<br>';
-				
+				//$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
 			}
 		}
 	}

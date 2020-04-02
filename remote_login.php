@@ -1,5 +1,5 @@
 <?php
-//include('functions.php') 
+include('functions.php') 
 //login();
 
 
@@ -7,7 +7,7 @@
 
 
 
-require "conn.php";
+//require "conn.php";
 $username=$_POST["username"];
 $password=$_POST["password"];
 echo $username;
@@ -27,6 +27,7 @@ if (mysqli_num_rows($results) > 0) { // user found
 		//$name =$row["username"];
 		echo "login success !!! Welcome user echo";
 		$msg = "login success!! Welcome user msg";
+		uploadJson();
 		/*
 		$data= file_get_contents($_post["data"]);
 		$array = json_decode($data, true);
