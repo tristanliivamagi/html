@@ -19,7 +19,7 @@ $curdir = getcwd();
 //The name of the directory that we need to create.
 $directoryName = "/temp";
 $tempdir=$curdir.$directoryName;
-echo $tempdir;
+//echo $tempdir;
 //Check if the directory already exists.
 /*
 if(!is_dir($directoryName)){
@@ -36,9 +36,29 @@ if(!is_dir($directoryName)){
 
 
 // variable declaration
+//users
+$user=0;//key id
 $username = "";
 $email    = "";
+$user_type = "";
+$password = "";
 $errors   = array(); 
+
+///machines
+$machine= 0;//key id
+$serialNumber="";
+
+//devices
+$device=0;//key id
+$macAddress ="";
+
+//counts
+$count=0;
+$temperature=0;
+$battery=0;
+
+
+
 
 // call the register() function if register_btn is clicked
 if (isset($_POST['register_btn'])) {
@@ -101,9 +121,20 @@ if (isset($_POST['add_business_btn'])) {
 	addBusiness();
 }
 function addBusiness(){
-	
-	
-	
+	// call these variables with the global keyword to make them available in function
+	global $db, $errors, $businessName;
+	// receive all input values from the form. Call the e() function
+    // defined below to escape form values
+	$businessName    =  e($_POST['businessName']);
+// form validation: ensure that the form is correctly filled
+	if (empty($businessName)) { 
+		array_push($errors, "businessName is required"); 
+	}
+	// register user if there are no errors in the form
+	if (count($errors) == 0) {
+		
+		
+	}
 	
 }
 
@@ -234,22 +265,100 @@ function uploadJson(){
 		echo $data;
 		echo'<br><br>';
 		display_array_recursive($array);
-		foreach($array as $row)
-		{
-			$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+		//foreach($array as $row)
+		//{
+		//	$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
 			
-			mysqli_query($db, $sql);
-		}
-		echo "data inserted";
+		//	mysqli_query($db, $sql);
+		//}
+		//echo "data inserted";
 }
+
+function uploadJsonString(){
+	
+	$data = file_get_contents('php://input');
+		$array = json_decode($data, true);
+		echo $data;
+		echo'<br><br>';
+		display_array_recursive($array);
+		//foreach($array as $row)
+		//{
+		//	$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+			
+		//	mysqli_query($db, $sql);
+		//}
+		//echo "data inserted";
+}
+
 function display_array_recursive($json_rec){
+
+	global $db, $errors;
+	global $user , $username , $email , $user_type , $password ;
+	global $machine , $serialNumber ;
+	global $device , $macAddress ;
+	global $count , $temperature , $battery ;
+
+	$query= "" ;
+
 	if($json_rec){
 		foreach($json_rec as $key=> $value){
 			if(is_array($value)){
 				display_array_recursive($value);
 			}else{
 				echo$key.'--'.$value.'<br>';
-				//$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+
+				switch ($key) {
+					case 'username':
+						$username=$value; 
+						break;
+					case 'password'://users
+						$password=$value;  
+						$query = "SELECT * FROM users WHERE username= '$username'  LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // user found
+							$row = mysql_fetch_row($results);
+							$user = $row[0];
+						}			 
+						break;
+					case 'serialNumber'://machines
+						$serialNumber=$value;		
+						$query = "INSERT INTO machines (user, serialNumber) 
+					  VALUES('$user', '$SerialNumber')";
+						$query = "SELECT * FROM machines WHERE serialNumber='$serialNumber' LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // machine found
+							$row = mysql_fetch_row($results);
+							$machine = $row[0];
+						}	 
+						break;
+					case 'macAddress'://devices
+						$macAddress=$value;
+						
+						$query = "INSERT INTO devices (machine, macAddress) 
+					   VALUES('$machine', '$macAddress')";
+						$query = "SELECT * FROM machines WHERE macAddress='$macAddress' LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // machine found
+							$row = mysql_fetch_row($results);
+							$count = $row[0];
+						} 
+						break;		
+					case 'count':
+						$count=$value;
+						break;
+					case 'temperature':
+						$temperature=$value;
+						break;
+					case 'battery':
+						$battery=$value;
+						$query = "INSERT INTO devices (device, count, temperature, battery) 
+					   VALUES('$device', '$count' , '$temperature' , '$battery' )"; 
+						break;	
+					default:
+						echo "No information available for that day.";
+						break;						
+				}  
+	
 			}
 		}
 	}
