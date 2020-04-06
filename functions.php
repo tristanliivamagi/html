@@ -2,7 +2,7 @@
 session_start();
 
 // connect to database  dbLocation   user           password    dbName
-$db = mysqli_connect('localhost', 'administrator', 'password', 'multi_login');
+$db = mysqli_connect('localhost', 'administrator', 'password', 'multi_login')or die("Connection Error: " . mysqli_error($db));
 
 if (!$db) {
     echo "Error: Unable to connect to MySQL." . PHP_EOL;
@@ -76,10 +76,16 @@ function register(){
 	$password_1  =  e($_POST['password_1']);
 	$password_2  =  e($_POST['password_2']);
 
+	
 	// form validation: ensure that the form is correctly filled
 	if (empty($username)) { 
 		array_push($errors, "Username is required"); 
 	}
+	$sql_u = "SELECT * FROM users WHERE username='$username'";
+	$res_u = mysqli_query($db, $sql_u);
+	if (mysqli_num_rows($res_u) > 0) {
+  	  array_push($errors, "Username is already taken"); 
+  	}
 	if (empty($email)) { 
 		array_push($errors, "Email is required"); 
 	}
@@ -292,7 +298,7 @@ function uploadJsonString(){
 
 function display_array_recursive($json_rec){
 
-	global $db, $errors;
+	global $db;
 	global $user , $username , $email , $user_type , $password ;
 	global $machine , $serialNumber ;
 	global $device , $macAddress ;
@@ -308,54 +314,69 @@ function display_array_recursive($json_rec){
 				echo$key.'--'.$value.'<br>';
 
 				switch ($key) {
-					case 'username':
+					case "username":
 						$username=$value; 
 						break;
-					case 'password'://users
+					case "password"://users
 						$password=$value;  
-						$query = "SELECT * FROM users WHERE username= '$username'  LIMIT 1";
-						$results = mysqli_query($db, $query);
-						if (mysqli_num_rows($results) == 1) { // user found
+						echo $username;
+						echo $password;
+						$password = md5($password);
+						
+						$query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
+						
+						echo $query;
+						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
+						//echo $results ;
+						if (mysqli_num_rows($results) >0) { // user found
 							$row = mysql_fetch_row($results);
 							$user = $row[0];
+							echo $user;
+							echo "got here";
 						}			 
 						break;
-					case 'serialNumber'://machines
+					case "serialNumber"://machines
+					
+					
 						$serialNumber=$value;		
 						$query = "INSERT INTO machines (user, serialNumber) 
 					  VALUES('$user', '$SerialNumber')";
-						$query = "SELECT * FROM machines WHERE serialNumber='$serialNumber' LIMIT 1";
-						$results = mysqli_query($db, $query);
-						if (mysqli_num_rows($results) == 1) { // machine found
+					    $results = mysqli_query($db, $query);
+						$query = "SELECT * FROM machines WHERE serialNumber='$serialNumber'";
+						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
+						if (mysqli_num_rows($results) >0) { // machine found
 							$row = mysql_fetch_row($results);
 							$machine = $row[0];
+							echo $machine;
 						}	 
 						break;
-					case 'macAddress'://devices
+					case "macAddress"://devices
 						$macAddress=$value;
-						
 						$query = "INSERT INTO devices (machine, macAddress) 
 					   VALUES('$machine', '$macAddress')";
-						$query = "SELECT * FROM machines WHERE macAddress='$macAddress' LIMIT 1";
-						$results = mysqli_query($db, $query);
-						if (mysqli_num_rows($results) == 1) { // machine found
+					    $results = mysqli_query($db, $query);
+						$query = "SELECT * FROM machines WHERE macAddress='$macAddress'";
+						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
+						if (mysqli_num_rows($results) >0) { // machine found
 							$row = mysql_fetch_row($results);
-							$count = $row[0];
+							$device = $row[0];
+							echo $device;
 						} 
 						break;		
-					case 'count':
+					case "count":
 						$count=$value;
 						break;
-					case 'temperature':
+					case "temperature":
 						$temperature=$value;
 						break;
-					case 'battery':
+					case "battery":
 						$battery=$value;
 						$query = "INSERT INTO devices (device, count, temperature, battery) 
 					   VALUES('$device', '$count' , '$temperature' , '$battery' )"; 
+					   // $results = mysqli_query($db, $query)or die(mysqli_error($db));
 						break;	
 					default:
-						echo "No information available for that day.";
+						echo "key not recognized.";
 						break;						
 				}  
 	

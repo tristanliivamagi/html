@@ -20,7 +20,7 @@
 	</div>
 	
 	<form method="post" enctype="multipart/form-data"action="Upload_Json.php">
-		<?php echo display_error(); ?>
+		
 		<div class="input-group">
 			<label>Select a json file to upload</label>
 			<input type="file" name="jsonFile">
