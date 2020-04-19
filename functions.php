@@ -1,7 +1,8 @@
 <?php 
 session_start();
+//define("constring",     "'localhost', 'administrator', 'password', 'multi_login'");
 
-// connect to database  dbLocation   user           password    dbName
+//$constring = "'localhost', 'administrator', 'password', 'multi_login'";
 $db = mysqli_connect('localhost', 'administrator', 'password', 'multi_login')or die("Connection Error: " . mysqli_error($db));
 
 if (!$db) {
@@ -11,14 +12,14 @@ if (!$db) {
     exit;
 }
 
-echo "Success: A proper connection to MySQL was made! The my_db database is great." . PHP_EOL;
-echo "Host information: " . mysqli_get_host_info($db) . PHP_EOL;
+//echo "Success: A proper connection to MySQL was made! The my_db database is great." . PHP_EOL;
+//echo "Host information: " . mysqli_get_host_info($db) . PHP_EOL;
 
 $curdir = getcwd();
 //echo $curdir;
 //The name of the directory that we need to create.
-$directoryName = "/temp";
-$tempdir=$curdir.$directoryName;
+//$directoryName = "/temp";
+//$tempdir=$curdir.$directoryName;
 //echo $tempdir;
 //Check if the directory already exists.
 /*
@@ -57,9 +58,9 @@ $count=0;
 $temperature=0;
 $battery=0;
 
-
-
-
+$keyarray = array();
+$valarray = array();
+//$listarray = [[1,2],];
 // call the register() function if register_btn is clicked
 if (isset($_POST['register_btn'])) {
 	register();
@@ -121,7 +122,33 @@ function register(){
 		}
 	}
 }
+$regnew=array();
+function remote_register(){
+global $db, $errors;
 
+global $regnew ;
+$data = file_get_contents('php://input');
+		$array = json_decode($data, true);
+		echo $data;
+		echo'<br><br>';
+		reg_recursive($array);
+
+
+$username=$regnew["username"];
+$email=$regnew["email"];
+$password=$regnew["password_1"];
+$password=md5($password);
+
+			$query = "INSERT INTO users (username, email, user_type, password) 
+					  VALUES('$username', '$email', 'user', '$password')";
+			mysqli_query($db, $query);
+
+
+}
+
+				 
+				
+				
 // call the addBusiness() function if register_btn is clicked
 if (isset($_POST['add_business_btn'])) {
 	addBusiness();
@@ -197,7 +224,7 @@ if (isset($_POST['login_btn'])) {
 function login(){
 	global $db, $username, $errors;
 
-	// grap form values
+	// grab form values
 	$username = e($_POST['username']);
 	$password = e($_POST['password']);
 
@@ -235,7 +262,12 @@ function login(){
 		}
 	}
 }
-
+function Display_Data()
+{
+	global $db, $username, $errors;
+	
+	
+}
 function isAdmin()
 {
 	if (isset($_SESSION['user']) && $_SESSION['user']['user_type'] == 'admin' ) {
@@ -246,134 +278,228 @@ function isAdmin()
 }
 
 // Valid constant names
-define("FOO",     "something");
-define("FOO2",    "something else");
-define("FOO_BAR", "something more");
+//define("FOO",     "something");
+//define("FOO2",    "something else");
+//define("FOO_BAR", "something more");
 // variable declaration
-//$filename="";
 
 
-// call the login() function if register_btn is clicked
+// call the uploadJson() function if register_btn is clicked
 if (isset($_POST['upload_json_btn'])) {
 	uploadJson();
 }
 
 //insert machine stuff from json file
 function uploadJson(){
-		
+	global $db;
+	//global $db,$regnew,$keyarray;
+	//$foreignkey = 0;
+	//$id = 0;
+	
 	if(isset($_FILES['jsonFile'])){
 		print_r($_FILES);
 	}
-
-
 	$data= file_get_contents($_FILES['jsonFile']['tmp_name']);//'machinesOperationalData.json'
-		$array = json_decode($data, true);
-		echo $data;
-		echo'<br><br>';
-		display_array_recursive($array);
-		//foreach($array as $row)
-		//{
-		//	$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
+	$array = json_decode($data,true);
+	echo'<br><br>';
+	echo $data;
+	//var_dump($array);
+	echo'<br><br>';
+	print_r($array);
+	echo'<br><br>';
+	//echo $array;
+	echo'<br><br>';
+	//reg_recursive($array);
+	//session_destroy();
+	display_array_recursive($array);
+	
+	
+	echo'<br><br>';
+	//print_r($regnew);
+	/* foreach ($keyarray as list($table,$key,$val1,$val2, $val3)){
+
+		echo "here!";
+		switch ($table){
+			case"users":
+			$query = "SELECT id FROM users WHERE username='$val1' LIMIT 1";
+			$results = mysqli_query($db, $query);
+			if (mysqli_num_rows($results) == 1) { // user found
 			
-		//	mysqli_query($db, $sql);
-		//}
-		//echo "data inserted";
+			]
+			break;
+			case"machines":
+			
+			break;
+			case"devices":
+			
+			break;
+			case"counts":
+			
+			break;
+			default:
+				echo "key not recognized.";
+			break;			
+			
+			
+		} */
+		
+		/*
+		//check if it exists already
+		$results = mysqli_query($db, $Qa);
+	
+		//if it douse then get the id foreignkey and move on
+		if (mysqli_num_rows($results) == 1) { // user found
+		
+		$foreignkey = mysqli_fetch_assoc($results);
+		}else{
+			
+
+		}				//else create the thing inserting the foreign key get the id key of it and move on
+		
+	} */
+
 }
 
+//INSERT INTO `machines` (`id`, `user`, `serialNumber`, `dateCreated`) VALUES ('2', '1', 'fgdhg', '2020-04-07')
+
+
+
 function uploadJsonString(){
-	
+	global $db;
 	$data = file_get_contents('php://input');
 		$array = json_decode($data, true);
 		echo $data;
 		echo'<br><br>';
 		display_array_recursive($array);
-		//foreach($array as $row)
-		//{
-		//	$sql = "INSERT INTO machines(serialNumber) VALUES ('".$row["machineSerialStr"]."')";
-			
-		//	mysqli_query($db, $sql);
-		//}
-		//echo "data inserted";
-}
+	
+} 
 
-function display_array_recursive($json_rec){
 
-	global $db;
-	global $user , $username , $email , $user_type , $password ;
-	global $machine , $serialNumber ;
-	global $device , $macAddress ;
-	global $count , $temperature , $battery ;
-
-	$query= "" ;
-
+function reg_recursive($json_reg){
+	global $regnew;
 	if($json_rec){
 		foreach($json_rec as $key=> $value){
 			if(is_array($value)){
 				display_array_recursive($value);
 			}else{
 				echo$key.'--'.$value.'<br>';
+				$regnew +=[$key =>$value];
 
+			}
+		}		
+	}
+}
+function database_json($username)
+{
+	global $db;
+	$jsonarray=array();
+	
+	$query = "SELECT * FROM users WHERE username='$username' LIMIT 1";
+	$results = mysqli_query($db, $query);
+	if (mysqli_num_rows($results) == 1) { // user found
+	// check if user is admin or user
+	$logged_in_user = mysqli_fetch_assoc($results);
+	$user = $logged_in_user['id'] ;
+	}
+	
+}
+function display_array_recursive($json_rec){
+	
+	global $db;
+	global $user , $username , $email , $user_type , $password ;
+	global $machine , $serialNumber ;
+	global $device , $macAddress ;
+	global $count , $temperature , $battery ;
+	//global $keyarray , $valarray;
+	if($json_rec){
+		foreach($json_rec as $key=> $value){
+			if(is_array($value)){
+				display_array_recursive($value);
+			}else{
+				echo$key.'--'.$value.'<br>';
+		
 				switch ($key) {
 					case "username":
-						$username=$value; 
+						$username=$value;
+						
 						break;
 					case "password"://users
-						$password=$value;  
-						echo $username;
-						echo $password;
-						$password = md5($password);
-						
-						$query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-						
-						echo $query;
-						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
-						//echo $results ;
-						if (mysqli_num_rows($results) >0) { // user found
-							$row = mysql_fetch_row($results);
-							$user = $row[0];
-							echo $user;
-							echo "got here";
-						}			 
+						$query = "SELECT * FROM users WHERE username='$username' LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // user found
+						// check if user is admin or user
+						$logged_in_user = mysqli_fetch_assoc($results);
+						$user = $logged_in_user['id'] ;
+						echo '<br>';
+						}
+
 						break;
 					case "serialNumber"://machines
-					
-					
-						$serialNumber=$value;		
+						$query = "SELECT * FROM machines WHERE serialNumber='$value' LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // found the machine already in database
+						$found_machine = mysqli_fetch_assoc($results);
+						$machine = $found_machine['id'];// get the id of the machine
+						$query2="UPDATE machines SET user='$user' WHERE id='$machine'";
+						mysqli_query($db, $query2);
+						}else{//add new row to database
+						echo '<br>';
+						echo $user;
+						echo '<br>';
 						$query = "INSERT INTO machines (user, serialNumber) 
-					  VALUES('$user', '$SerialNumber')";
-					    $results = mysqli_query($db, $query);
-						$query = "SELECT * FROM machines WHERE serialNumber='$serialNumber'";
-						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
-						if (mysqli_num_rows($results) >0) { // machine found
-							$row = mysql_fetch_row($results);
-							$machine = $row[0];
-							echo $machine;
-						}	 
+								VALUES('$user', '$value' )";
+						mysqli_query($db, $query);//inserting the new row
+						$machine = mysqli_insert_id($db);// get the id of the machine
+						echo '<br>';
+						echo $machine;
+						echo '<br>';
+							
+						}
+						
 						break;
 					case "macAddress"://devices
-						$macAddress=$value;
+						$query = "SELECT * FROM devices WHERE macAddress='$value' LIMIT 1";
+						$results = mysqli_query($db, $query);
+						if (mysqli_num_rows($results) == 1) { // found the device already in database
+						$found_device = mysqli_fetch_assoc($results);
+						$device = $found_device['id'];// get the id of the device
+						$query2="UPDATE devices SET machine='$machine' WHERE id='$device'";
+						mysqli_query($db, $query2);
+						}else{//add new row to database
+						echo '<br>';
+						echo $machine;
+						echo '<br>';
 						$query = "INSERT INTO devices (machine, macAddress) 
-					   VALUES('$machine', '$macAddress')";
-					    $results = mysqli_query($db, $query);
-						$query = "SELECT * FROM machines WHERE macAddress='$macAddress'";
-						//$results = mysqli_query($db, $query)or die(mysqli_error($db));
-						if (mysqli_num_rows($results) >0) { // machine found
-							$row = mysql_fetch_row($results);
-							$device = $row[0];
-							echo $device;
-						} 
+								VALUES('$machine', '$value' )";
+						mysqli_query($db, $query);//inserting the new row
+						$device = mysqli_insert_id($db);// get the id of the machine
+						echo '<br>';
+						echo $device;
+						echo '<br>';
+							
+						}
 						break;		
 					case "count":
-						$count=$value;
+						$count=$value;/////
+						
 						break;
 					case "temperature":
-						$temperature=$value;
+						$temperature=$value;/////
+						
 						break;
 					case "battery":
-						$battery=$value;
-						$query = "INSERT INTO devices (device, count, temperature, battery) 
-					   VALUES('$device', '$count' , '$temperature' , '$battery' )"; 
-					   // $results = mysqli_query($db, $query)or die(mysqli_error($db));
+						$battery = $value;/////
+						echo '<br>';
+						echo $machine;
+						echo '<br>';
+						$query = "INSERT INTO counts (device, count, temperature, battery ) 
+								VALUES('$device', '$count', '$temperature', '$battery' )";
+						mysqli_query($db, $query);//inserting the new row
+						echo mysqli_insert_id($db);// get the id of the machine
+						echo '<br>';
+						echo $device;
+						echo '<br>';
+						
 						break;	
 					default:
 						echo "key not recognized.";

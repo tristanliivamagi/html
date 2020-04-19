@@ -52,6 +52,8 @@ if ($result = $mysqli->query($query)) {
                   <td>'.$field4name.'</td> 
 				   <td>'.$field5name.'</td> 
               </tr>';
+		
+			  
     }
     $result->free();
 } 
