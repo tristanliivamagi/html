@@ -315,6 +315,9 @@ function uploadJson(){
 	
 	
 	echo'<br><br>';
+	$user = "tristan";
+	database_json($user);
+	
 	//print_r($regnew);
 	/* foreach ($keyarray as list($table,$key,$val1,$val2, $val3)){
 
@@ -394,13 +397,33 @@ function database_json($username)
 	global $db;
 	$jsonarray=array();
 	
-	$query = "SELECT * FROM users WHERE username='$username' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	if (mysqli_num_rows($results) == 1) { // user found
-	// check if user is admin or user
-	$logged_in_user = mysqli_fetch_assoc($results);
-	$user = $logged_in_user['id'] ;
-	}
+	
+		
+		$query = "SELECT users.username, machines.serialNumber, devices.macAddress, counts.count 
+		FROM users 
+		LEFT JOIN machines  ON users.id = machines.user
+		LEFT JOIN  devices ON machines.id = devices.machine
+		LEFT JOIN  counts ON devices.id = counts.device
+		WHERE users.username = 'tristan'
+		";  
+
+		//$query = "SELECT * FROM users ";
+		$result = mysqli_query($db, $query) or die("Error in Selecting " . mysqli_error($db));
+		while($row =mysqli_fetch_assoc($result))
+		{
+			
+			$jsonarray[] = $row;
+		}
+		//echo $jsonarray;
+		echo json_encode($jsonarray);
+/* 		$query = "SELECT serialNumber,machine FROM machines WHERE user ='$user'";
+		$results = mysqli_query($db, $query);
+		while($row =mysqli_fetch_assoc($result))
+		{
+			$jasonarray+=["serialNumber" => $row];
+			
+		} */
+
 	
 }
 function display_array_recursive($json_rec){
