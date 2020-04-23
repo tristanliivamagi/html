@@ -324,7 +324,7 @@ function uploadJsonString(){
 //for getting user info used in remote user creation
 function reg_recursive($json_reg){
 	global $regnew;
-	if($json_rec){
+	if($json_reg){
 		foreach($json_reg as $key=> $value){
 			if(is_array($value)){
 				display_array_recursive($value);
