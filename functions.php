@@ -138,38 +138,22 @@ $username=$regnew["username"];
 $email=$regnew["email"];
 $password=$regnew["password_1"];
 $password=md5($password);
-
+	$sql_u = "SELECT * FROM users WHERE username='$username'";
+	$res_u = mysqli_query($db, $sql_u);
+	if (mysqli_num_rows($res_u) > 0) {
+  	  echo "username already taken"; 
+  	}else{
 			$query = "INSERT INTO users (username, email, user_type, password) 
 					  VALUES('$username', '$email', 'user', '$password')";
 			mysqli_query($db, $query);
-
+	}
 
 }
 
 				 
 				
 				
-// call the addBusiness() function if register_btn is clicked
-if (isset($_POST['add_business_btn'])) {
-	addBusiness();
-}
-function addBusiness(){
-	// call these variables with the global keyword to make them available in function
-	global $db, $errors, $businessName;
-	// receive all input values from the form. Call the e() function
-    // defined below to escape form values
-	$businessName    =  e($_POST['businessName']);
-// form validation: ensure that the form is correctly filled
-	if (empty($businessName)) { 
-		array_push($errors, "businessName is required"); 
-	}
-	// register user if there are no errors in the form
-	if (count($errors) == 0) {
-		
-		
-	}
-	
-}
+
 
 // return user array from their id
 function getUserById($id){
@@ -246,6 +230,7 @@ function login(){
 		if (mysqli_num_rows($results) == 1) { // user found
 			// check if user is admin or user
 			$logged_in_user = mysqli_fetch_assoc($results);
+			
 			if ($logged_in_user['user_type'] == 'admin') {
 
 				$_SESSION['user'] = $logged_in_user;
@@ -256,6 +241,9 @@ function login(){
 				$_SESSION['success']  = "You are now logged in";
 
 				header('location: index.php');
+				
+			
+
 			}
 		}else {
 			array_push($errors, "Wrong username/password combination");
@@ -291,7 +279,7 @@ if (isset($_POST['upload_json_btn'])) {
 
 //insert machine stuff from json file
 function uploadJson(){
-	global $db;
+	global $db, $username;
 	//global $db,$regnew,$keyarray;
 	//$foreignkey = 0;
 	//$id = 0;
@@ -315,73 +303,29 @@ function uploadJson(){
 	
 	
 	echo'<br><br>';
-	$user = "tristan";
-	database_json($user);
 	
-	//print_r($regnew);
-	/* foreach ($keyarray as list($table,$key,$val1,$val2, $val3)){
-
-		echo "here!";
-		switch ($table){
-			case"users":
-			$query = "SELECT id FROM users WHERE username='$val1' LIMIT 1";
-			$results = mysqli_query($db, $query);
-			if (mysqli_num_rows($results) == 1) { // user found
-			
-			]
-			break;
-			case"machines":
-			
-			break;
-			case"devices":
-			
-			break;
-			case"counts":
-			
-			break;
-			default:
-				echo "key not recognized.";
-			break;			
-			
-			
-		} */
-		
-		/*
-		//check if it exists already
-		$results = mysqli_query($db, $Qa);
+	database_json($username);
 	
-		//if it douse then get the id foreignkey and move on
-		if (mysqli_num_rows($results) == 1) { // user found
-		
-		$foreignkey = mysqli_fetch_assoc($results);
-		}else{
-			
-
-		}				//else create the thing inserting the foreign key get the id key of it and move on
-		
-	} */
 
 }
 
-//INSERT INTO `machines` (`id`, `user`, `serialNumber`, `dateCreated`) VALUES ('2', '1', 'fgdhg', '2020-04-07')
-
-
 
 function uploadJsonString(){
-	global $db;
+	global $db , $username;
 	$data = file_get_contents('php://input');
 		$array = json_decode($data, true);
 		echo $data;
 		echo'<br><br>';
 		display_array_recursive($array);
+		database_json($username);
 	
 } 
 
-
+//for getting user info used in remote user creation
 function reg_recursive($json_reg){
 	global $regnew;
 	if($json_rec){
-		foreach($json_rec as $key=> $value){
+		foreach($json_reg as $key=> $value){
 			if(is_array($value)){
 				display_array_recursive($value);
 			}else{
@@ -397,14 +341,14 @@ function database_json($username)
 	global $db;
 	$jsonarray=array();
 	
-	
+	//users.username, machines.serialNumber, devices.macAddress, counts.count 
 		
-		$query = "SELECT users.username, machines.serialNumber, devices.macAddress, counts.count 
+		$query = "SELECT *
 		FROM users 
 		LEFT JOIN machines  ON users.id = machines.user
 		LEFT JOIN  devices ON machines.id = devices.machine
 		LEFT JOIN  counts ON devices.id = counts.device
-		WHERE users.username = 'tristan'
+		WHERE users.username = '$username'
 		";  
 
 		//$query = "SELECT * FROM users ";
@@ -439,7 +383,7 @@ function display_array_recursive($json_rec){
 			if(is_array($value)){
 				display_array_recursive($value);
 			}else{
-				echo$key.'--'.$value.'<br>';
+				//echo$key.'--'.$value.'<br>';
 		
 				switch ($key) {
 					case "username":
@@ -453,7 +397,7 @@ function display_array_recursive($json_rec){
 						// check if user is admin or user
 						$logged_in_user = mysqli_fetch_assoc($results);
 						$user = $logged_in_user['id'] ;
-						echo '<br>';
+						//echo '<br>';
 						}
 
 						break;
@@ -466,16 +410,16 @@ function display_array_recursive($json_rec){
 						$query2="UPDATE machines SET user='$user' WHERE id='$machine'";
 						mysqli_query($db, $query2);
 						}else{//add new row to database
-						echo '<br>';
-						echo $user;
-						echo '<br>';
+						//echo '<br>';
+						//echo $user;
+						//echo '<br>';
 						$query = "INSERT INTO machines (user, serialNumber) 
 								VALUES('$user', '$value' )";
 						mysqli_query($db, $query);//inserting the new row
 						$machine = mysqli_insert_id($db);// get the id of the machine
-						echo '<br>';
-						echo $machine;
-						echo '<br>';
+						//echo '<br>';
+						//echo $machine;
+						//echo '<br>';
 							
 						}
 						
@@ -489,16 +433,16 @@ function display_array_recursive($json_rec){
 						$query2="UPDATE devices SET machine='$machine' WHERE id='$device'";
 						mysqli_query($db, $query2);
 						}else{//add new row to database
-						echo '<br>';
-						echo $machine;
-						echo '<br>';
+						//echo '<br>';
+						//echo $machine;
+						//echo '<br>';
 						$query = "INSERT INTO devices (machine, macAddress) 
 								VALUES('$machine', '$value' )";
 						mysqli_query($db, $query);//inserting the new row
 						$device = mysqli_insert_id($db);// get the id of the machine
-						echo '<br>';
-						echo $device;
-						echo '<br>';
+						//echo '<br>';
+						//echo $device;
+						//echo '<br>';
 							
 						}
 						break;		
@@ -512,20 +456,20 @@ function display_array_recursive($json_rec){
 						break;
 					case "battery":
 						$battery = $value;/////
-						echo '<br>';
-						echo $machine;
-						echo '<br>';
+						//echo '<br>';
+						//echo $machine;
+						//echo '<br>';
 						$query = "INSERT INTO counts (device, count, temperature, battery ) 
 								VALUES('$device', '$count', '$temperature', '$battery' )";
 						mysqli_query($db, $query);//inserting the new row
 						echo mysqli_insert_id($db);// get the id of the machine
-						echo '<br>';
-						echo $device;
-						echo '<br>';
+						//echo '<br>';
+						//echo $device;
+						//echo '<br>';
 						
 						break;	
 					default:
-						echo "key not recognized.";
+						//echo "key not recognized.";
 						break;						
 				}  
 	

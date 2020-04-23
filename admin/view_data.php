@@ -16,41 +16,60 @@
 </head>
 <body>
 	<div class="header">
-		<h2>Admin - View User</h2>
+		<h2>Admin - View Data</h2>
 	</div>
 <?php 
+
 $username = "administrator"; 
 $password = "password"; 
 $database = "multi_login"; 
 $mysqli = new mysqli("localhost", $username, $password, $database); 
-$query = "SELECT * FROM users";
+//$query = "SELECT * FROM users";users.username, machines.serialNumber, devices.macAddress, counts.count
+$query = "SELECT  *
+				FROM users 
+				LEFT JOIN machines  ON users.id = machines.user
+				LEFT JOIN  devices ON machines.id = devices.machine
+				LEFT JOIN  counts ON devices.id = counts.device
+				
+				";  
  
  
 echo '<table border="0" cellspacing="2" cellpadding="2"> 
       <tr> 
 		  
-		  <td> <font face="Arial">id</font> </td>
-          <td> <font face="Arial">User name</font> </td> 
-          <td> <font face="Arial">Email</font> </td> 
-          <td> <font face="Arial">User Type</font> </td> 
-		  <td> <font face="Arial">Password</font> </td> 
-  
+		  <td> <font face="Arial">username</font> </td>
+          <td> <font face="Arial">email</font> </td> 
+          <td> <font face="Arial">serialNumber </font> </td> 
+          <td> <font face="Arial">macAddress</font> </td> 
+          <td> <font face="Arial">count</font> </td> 
+          <td> <font face="Arial">temperature</font> </td> 
+          <td> <font face="Arial">battery</font> </td> 
+            <td> <font face="Arial">time</font> </td> 
+			
       </tr>';
  
 if ($result = $mysqli->query($query)) {
     while ($row = $result->fetch_assoc()) {
-		$field1name = $row["id"];
-        $field2name = $row["username"];
-        $field3name = $row["email"];
-        $field4name = $row["user_type"];
-        $field5name = $row["password"];
+		$field1name = $row["username"];
+		$field2name = $row["email"];
+        $field3name = $row["serialNumber"];
+        $field4name = $row["macAddress"];
+        $field5name = $row["count"];
+		$field6name = $row["temperature"];
+		$field7name = $row["battery"];
+        $field8name = $row["time"];
  
         echo '<tr> 
+		
                   <td>'.$field1name.'</td> 
                   <td>'.$field2name.'</td> 
                   <td>'.$field3name.'</td> 
                   <td>'.$field4name.'</td> 
-				   <td>'.$field5name.'</td> 
+				  <td>'.$field5name.'</td> 
+				  <td>'.$field6name.'</td> 
+					<td>'.$field7name.'</td> 
+				<td>'.$field8name.'</td>    
+				
               </tr>';
 		
 			  
