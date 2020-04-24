@@ -1,4 +1,12 @@
-<?php include('../functions.php') ?>
+<?php include('../functions.php') 
+
+if (!isAdmin()) {
+	$_SESSION['msg'] = "You must log in first";
+	header('location: ../login.php');
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -27,6 +35,7 @@
 		</div>
 		<div class="input-group">
 			<button type="submit" class="btn" name="upload_json_btn"> + upload a file</button>
+				 &nbsp; <a href="home.php"> + Go Back to home</a>
 		</div>
 	</form>
 </body>

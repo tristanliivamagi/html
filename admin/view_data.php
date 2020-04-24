@@ -1,4 +1,11 @@
+<?php 
+include('../functions.php');
 
+if (!isAdmin()) {
+	$_SESSION['msg'] = "You must log in first";
+	header('location: ../login.php');
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -18,12 +25,13 @@
 	<div class="header">
 		<h2>Admin - View Data</h2>
 	</div>
+	 &nbsp; <a href="home.php"> + Go Back to home</a>
 <?php 
-
+/* 
 $username = "administrator"; 
 $password = "password"; 
 $database = "multi_login"; 
-$mysqli = new mysqli("localhost", $username, $password, $database); 
+$mysqli = new mysqli("localhost", $username, $password, $database);  */
 //$query = "SELECT * FROM users";users.username, machines.serialNumber, devices.macAddress, counts.count
 $query = "SELECT  *
 				FROM users 
@@ -48,7 +56,7 @@ echo '<table border="0" cellspacing="2" cellpadding="2">
 			
       </tr>';
  
-if ($result = $mysqli->query($query)) {
+if ($result = $db->query($query)) {
     while ($row = $result->fetch_assoc()) {
 		$field1name = $row["username"];
 		$field2name = $row["email"];
