@@ -32,6 +32,7 @@
 	</div>
 	<div class="input-group">
 		<button type="submit" class="btn" name="register_btn">Register</button>
+			 &nbsp; <a href="terms.php"target="_blank"> + Terms of service</a>
 	</div>
 	<p>
 		Already a member? <a href="login.php">Sign in</a>

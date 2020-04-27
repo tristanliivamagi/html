@@ -250,12 +250,7 @@ function login(){
 		}
 	}
 }
-function Display_Data()
-{
-	global $db, $username, $errors;
-	
-	
-}
+
 function isAdmin()
 {
 	if (isset($_SESSION['user']) && $_SESSION['user']['user_type'] == 'admin' ) {
