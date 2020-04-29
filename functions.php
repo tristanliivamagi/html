@@ -100,19 +100,35 @@ function register(){
 	// register user if there are no errors in the form
 	if (count($errors) == 0) {
 		$password = md5($password_1);//encrypt the password before saving in the database
-
+		$status=0;
+		$activationcode=md5($email.time());
 		if (isset($_POST['user_type'])) {
 			$user_type = e($_POST['user_type']);
-			$query = "INSERT INTO users (username, email, user_type, password) 
-					  VALUES('$username', '$email', '$user_type', '$password')";
+			$query = "INSERT INTO users (username, email, user_type, password,activationcode,status) 
+					  VALUES('$username', '$email', '$user_type', '$password','$activationcode','$status')";
 			mysqli_query($db, $query);
 			$_SESSION['success']  = "New user successfully created!!";
 			header('location: home.php');
 		}else{
-			$query = "INSERT INTO users (username, email, user_type, password) 
-					  VALUES('$username', '$email', 'user', '$password')";
+			$query = "INSERT INTO users (username, email, user_type, password,activationcode,status) 
+					  VALUES('$username', '$email', 'user', '$password','$activationcode','$status')";
 			mysqli_query($db, $query);
 
+			$to=$email;
+			$msg= "Thanks for new Registration.";
+			$subject="Email verification (phpgurukul.com)";
+			$headers .= "MIME-Version: 1.0"."\r\n";
+			$headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
+			$headers .= 'From:tristan | Programing Blog <tristanliivamagi@gmail.com>'."\r\n";
+			$ms.="<html></body><div><div>Dear $username,</div></br></br>";
+			$ms.="<div style='padding-top:8px;'>Please click The following link For verifying and activation of your account</div>
+			<div style='padding-top:10px;'><a href=  'http://24.84.210.161:8080/email_verification.php?code=$activationcode'>Click Here</a></div>
+			<div style='padding-top:4px;'>Powered by <a href='phpgurukul.com'>phpgurukul.com</a></div></div>
+			</body></html>";
+			mail($to,$subject,$ms,$headers);
+			echo "<script>alert('Registration successful, please verify in the registered Email-Id');</script>";
+			echo "<script>window.location = 'login.php';</script>";;
+			
 			// get id of the created user
 			$logged_in_user_id = mysqli_insert_id($db);
 
