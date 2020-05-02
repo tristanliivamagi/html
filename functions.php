@@ -195,12 +195,9 @@ function e($val){
 function display_error($key) {
 	global $errors;
 
-	if (count($errors) > 0){
+	if (count($errors[$key]) > 0){
 		echo '<div class="error">';
-			/* foreach ($errors as $error){
-				echo $error .'<br>';
-			} */
-			echo $errors[$key] ;
+		echo $errors[$key] ;
 		echo '</div>';
 	}
 }	
@@ -270,7 +267,7 @@ function login(){
 
 			}
 		}else {
-			
+			$errors += ["combo"=>"Wrong username/password combination"];
 			//array_push($errors,"Wrong username/password combination");
 			
 		}
