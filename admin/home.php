@@ -76,7 +76,7 @@ if (isset($_GET['logout'])) {
 										";  
 						 
 						 
-						echo '<table border="0" cellspacing="2" cellpadding="2"> 
+						echo '<table border="1" cellspacing="2" cellpadding="2"> 
 							  <tr> 
 								  
 								  <td> <font face="Arial">username</font> </td>

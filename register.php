@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Registration system PHP and MySQL</title>
+	<title>Registration of new user</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,6 +14,7 @@
 </div>
 <form method="post" action="register.php">
 	<?php echo display_error(); ?>
+	
 	<div class="input-group">
 		<label>Username</label>
 		<input type="text" name="username" value="<?php echo $username; ?>">
@@ -35,7 +36,7 @@
 			 &nbsp; <a href="terms.php"target="_blank"> + Terms of service</a>
 	</div>
 	<p>
-		Already a member? <a href="login.php">Sign in</a>
+		Already have an account? <a href="login.php">Sign in</a>
 	</p>
 </form>
 
