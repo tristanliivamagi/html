@@ -13,15 +13,17 @@
 	</div>
 	<form method="post" action="login.php">
 
-		<?php echo display_error(); ?>
+		
 
 		<div class="input-group">
 			<label>Username</label>
 			<input type="text" name="username" >
+			<?php echo display_error('username'); ?>
 		</div>
 		<div class="input-group">
 			<label>Password</label>
 			<input type="password" name="password">
+			<?php echo display_error('password'); ?>
 		</div>
 		<div class="input-group">
 			<button type="submit" class="btn" name="login_btn">Login</button>
