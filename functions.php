@@ -81,25 +81,25 @@ function register(){
 	// form validation: ensure that the form is correctly filled
 	if (empty($username)) { 
 		$errors += ["username"=>"Username is required"];
-		//array_push($errors, "Username is required"); 
+		
 	}
 	$sql_u = "SELECT * FROM users WHERE username='$username'";
 	$res_u = mysqli_query($db, $sql_u);
 	if (mysqli_num_rows($res_u) > 0) {
 		$errors += ["username"=>"Username is already taken"];
-		//array_push($errors, "Username is already taken"); 
+		
   	}
 	if (empty($email)) { 
 		$errors += ["email"=>"Email is required"];
-		//array_push($errors, "Email is required"); 
+		 
 	}
 	if (empty($password_1)) { 
 		$errors += ["password_1"=>"Password is required"];
-		//array_push($errors, "Password is required"); 
+		
 	}
 	if ($password_1 != $password_2) {
 		$errors += ["password_2"=>"The two passwords do not match"];
-		//array_push($errors, "The two passwords do not match"); 
+		
 	}
 
 	// register user if there are no errors in the form
@@ -234,11 +234,11 @@ function login(){
 	// make sure form is filled properly
 	if (empty($username)) {
 		$errors += ["username"=>"Username is required"];
-		//array_push($errors, "Username is required"); 
+		
 	}
 	if (empty($password)) {
 		$errors += ["password"=>"password is required"];
-		//array_push($errors, "Password is required"); 
+		 
 	}
 
 	// attempt login if no errors on form
@@ -268,7 +268,7 @@ function login(){
 			}
 		}else {
 			$errors += ["combo"=>"Wrong username/password combination"];
-			//array_push($errors,"Wrong username/password combination");
+			
 			
 		}
 	}
