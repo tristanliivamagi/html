@@ -327,7 +327,7 @@ function uploadJson(){
 
 }
 
-
+//method for remote login
 function uploadJsonString(){
 	global $db , $username;
 	$data = file_get_contents('php://input');
@@ -345,7 +345,7 @@ function reg_recursive($json_reg){
 	if($json_reg){
 		foreach($json_reg as $key=> $value){
 			if(is_array($value)){
-				display_array_recursive($value);
+				reg_recursive($value);
 			}else{
 				echo$key.'--'.$value.'<br>';
 				$regnew +=[$key =>$value];
