@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 
 $input = filter_input_array(INPUT_POST);
 
-$mysqli = new mysqli('localhost', 'user', 'password', 'database');
+$mysqli = new mysqli('localhost','administrator', 'password', 'multi_login');
 
 if (mysqli_connect_errno()) {
   echo json_encode(array('mysqli' => 'Failed to connect to MySQL: ' . mysqli_connect_error()));
@@ -15,7 +15,7 @@ if (mysqli_connect_errno()) {
 }
 
 if ($input['action'] === 'edit') {
-    $mysqli->query("UPDATE users SET username='" . $input['username'] . "', email='" . $input['email'] . "', avatar='" . $input['avatar'] . "' WHERE id='" . $input['id'] . "'");
+    $mysqli->query("UPDATE users SET username='" . $input['username'] . "', email='" . $input['email'] . "', user_type='" . $input['user_type'] . "' WHERE id='" . $input['id'] . "'");
 } else if ($input['action'] === 'delete') {
     $mysqli->query("UPDATE users SET deleted=1 WHERE id='" . $input['id'] . "'");
 } else if ($input['action'] === 'restore') {

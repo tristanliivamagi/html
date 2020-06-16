@@ -1,7 +1,10 @@
 <?php 
 session_start();
 //define("constring",     "'localhost', 'administrator', 'password', 'multi_login'");
-
+$headers =  getallheaders();
+foreach($headers as $key=>$val){
+  //echo $key . ': ' . $val . '<br>';
+}
 //$constring = "'localhost', 'administrator', 'password', 'multi_login'";
 $db = mysqli_connect('localhost', 'administrator', 'password', 'multi_login')or die("Connection Error: " . mysqli_error($db));
 
@@ -332,8 +335,10 @@ function uploadJsonString(){
 	global $db , $username;
 	$data = file_get_contents('php://input');
 		$array = json_decode($data, true);
-		echo $data;
-		echo'<br><br>';
+		
+		//echo $data;
+		//echo'<br><br>';
+		
 		display_array_recursive($array);
 		database_json($username);
 	
@@ -354,6 +359,7 @@ function reg_recursive($json_reg){
 		}		
 	}
 }
+//outputs a json of all datbase associated with the username
 function database_json($username)
 {
 	global $db;
@@ -377,7 +383,7 @@ function database_json($username)
 			$jsonarray[] = $row;
 		}
 		//echo $jsonarray;
-		echo json_encode($jsonarray);
+		echo json_encode($jsonarray,JSON_FORCE_OBJECT);
 /* 		$query = "SELECT serialNumber,machine FROM machines WHERE user ='$user'";
 		$results = mysqli_query($db, $query);
 		while($row =mysqli_fetch_assoc($result))
